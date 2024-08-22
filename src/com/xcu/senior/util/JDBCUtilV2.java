@@ -23,7 +23,6 @@ public class JDBCUtilV2 {
 
         try {
             Properties properties = new Properties();
-            InputStream inputStream = JDBCUtil.class.getClassLoader().getResourceAsStream("db.properties");
             properties.load(inputStream);
             dataSource = DruidDataSourceFactory.createDataSource(properties);
         } catch (Exception e) {

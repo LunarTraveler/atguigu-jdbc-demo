@@ -5,7 +5,6 @@ import com.xcu.senior.util.JDBCUtilV2;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BaseDAO {
 
@@ -105,7 +104,6 @@ public abstract class BaseDAO {
         if (connection.getAutoCommit()) {
             JDBCUtilV2.release();
         }
-
 
         return list;
     }
