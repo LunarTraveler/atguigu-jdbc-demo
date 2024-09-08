@@ -124,4 +124,59 @@ public abstract class BaseDAO {
         return list.get(0);
     }
 
+    /**
+     * 用于查询单个基本数据类型结果的方法
+     * @param sql
+     * @param clazz
+     * @param params
+     * @return
+     * @param <T>
+     * @throws Exception
+     */
+    protected <T> T executeQuerySingle(String sql, Class<T> clazz, Object... params) throws Exception {
+        // 1.获取连接(JDBCUtilV2)
+        Connection connection = JDBCUtilV2.getConnection();
+
+        // 3.预编译SQL语句(BaseDao)
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+
+        // 4.为占位符赋值，执行SQL语句，获取结果(BaseDao)
+        if (params != null && params.length > 0) {
+            for (int i = 0; i < params.length; i++) {
+                preparedStatement.setObject(i + 1, params[i]);
+            }
+        }
+
+        ResultSet resultSet = preparedStatement.executeQuery();
+        T result = null;
+
+        // 处理标量查询结果
+        if (resultSet.next()) {
+            // 直接从结果集中获取标量值并进行类型转换
+            if (clazz == Integer.class) {
+                result = clazz.cast(resultSet.getInt(1));
+            } else if (clazz == Long.class) {
+                result = clazz.cast(resultSet.getLong(1));
+            } else if (clazz == Double.class) {
+                result = clazz.cast(resultSet.getDouble(1));
+            } else if (clazz == String.class) {
+                result = clazz.cast(resultSet.getString(1));
+            } else if (clazz == Boolean.class) {
+                result = clazz.cast(resultSet.getBoolean(1));
+            } else {
+                throw new RuntimeException("Unsupported type: " + clazz.getName());
+            }
+        }
+
+        // 6.释放资源(JDBCUtilV2)
+        resultSet.close();
+        preparedStatement.close();
+        if (connection.getAutoCommit()) {
+            JDBCUtilV2.release();
+        }
+
+        return result;
+    }
+
+
 }
